@@ -1,4 +1,4 @@
-# routemates-geo-build: agent rules
+# routesmate-geo-build: agent rules
 
 Infra spec: `Routemates PRD/infra/` (index `00_infrastructure_stack_index.md`). PRD: `Routemates PRD/prd/`.
 

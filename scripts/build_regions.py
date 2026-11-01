@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""India state/UT polygons + ghat road list for routemates-backend pkg/region (P3-GAM, backend#7).
+"""India state/UT polygons + ghat road list for routesmate-backend pkg/region (P3-GAM, backend#7).
 
 Input: GeoJSON sequences exported by osmium from the Geofabrik India extract (see build-regions.sh).
 Output: <out>/states/IN-XX.poly (osmosis .poly, simplified) and <out>/ghats.json.

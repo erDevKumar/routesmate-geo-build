@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# India states + ghats for routemates-backend pkg/region from a Geofabrik India extract.
+# India states + ghats for routesmate-backend pkg/region from a Geofabrik India extract.
 # usage: scripts/build-regions.sh india-latest.osm.pbf outdir
 set -euo pipefail
 pbf=$1 out=$2 tmp=$(mktemp -d)
@@ -12,7 +12,7 @@ fix=("$tmp/states.pbf")
 for r in $(osmium cat "$tmp/states.pbf" -t relation -f opl | grep 'ISO3166-2=IN-' | grep 'admin_level=4' | cut -d' ' -f1); do
   osmium getid -r "$tmp/states.pbf" "$r" -o "$tmp/$r.pbf"
   if ! osmium check-refs -r "$tmp/$r.pbf" >/dev/null 2>&1; then
-    curl -fsSL -A routemates-geo-build "https://api.openstreetmap.org/api/0.6/relation/${r#r}/full" -o "$tmp/$r.osm"
+    curl -fsSL -A routesmate-geo-build "https://api.openstreetmap.org/api/0.6/relation/${r#r}/full" -o "$tmp/$r.osm"
     osmium sort "$tmp/$r.osm" -o "$tmp/$r.full.pbf"
     fix+=("$tmp/$r.full.pbf")
   fi
