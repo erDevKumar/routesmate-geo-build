@@ -1,6 +1,6 @@
 # routesmate-geo-build: agent rules
 
-Infra spec: `Routemates PRD/infra/` (index `00_infrastructure_stack_index.md`). PRD: `Routemates PRD/prd/`.
+Infra spec: `Routesmate PRD/infra/` (index `00_infrastructure_stack_index.md`). PRD: `Routesmate PRD/prd/`.
 
 ## Binding (security, every layer)
 - Before designing or writing anything, read `docs/rules/security/00_index.md` and the S-files it routes you to. Apply its checklist to every PR.
