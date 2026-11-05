@@ -2,7 +2,7 @@ name: valhalla-india
 on:
   schedule: [{ cron: "0 20 1 * *" }]   # 1st of month, 01:30 IST
   workflow_dispatch: {}
-permissions: { contents: read }
+permissions: { contents: write }
 jobs:
   build:
     runs-on: ubuntu-24.04-arm
@@ -18,10 +18,6 @@ jobs:
           curl -fsSL https://download.geofabrik.de/asia/india-latest.osm.pbf.md5 | md5sum -c -
           # P3-GEO: the extract boundary; backend pkg/region/polys/IN.poly must match it (diff on refresh)
           curl -fsSL -o india.poly https://download.geofabrik.de/asia/india.poly
-      - name: Build state polygons + ghats (backend pkg/region; diff and commit there on refresh)
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq osmium-tool
-          scripts/build-regions.sh data/india-latest.osm.pbf data/regions
       - name: Build tiles
         run: |
           docker run --rm -v "$PWD/data:/data" -v "$PWD/config:/config" "${VALHALLA_IMAGE}" bash -c '
@@ -37,6 +33,17 @@ jobs:
           cd data && zstd -19 -T0 valhalla_tiles.tar -o valhalla-india.tar.zst
           sha256sum valhalla-india.tar.zst > valhalla-india.sha256
           cp ../config/valhalla.json valhalla.json
+      - name: Publish release (the backend geo chart pins this asset by sha256)
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          tag=tiles-$(date -u +%Y-%m-%d)-${{ github.run_number }}
+          gh release create "$tag" --title "$tag" --notes "Valhalla India tiles (OSM ODbL, Geofabrik extract)" data/valhalla-india.tar.zst data/valhalla-india.sha256
+          cat data/valhalla-india.sha256
+      - name: Build state polygons + ghats (backend pkg/region; diff and commit there on refresh)
+        continue-on-error: true
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq osmium-tool
+          bash -x scripts/build-regions.sh data/india-latest.osm.pbf data/regions
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: valhalla-india
