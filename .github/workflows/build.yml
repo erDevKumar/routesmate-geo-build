@@ -30,14 +30,17 @@ jobs:
         env: { VALHALLA_IMAGE: "ghcr.io/valhalla/valhalla@sha256:7338fee816f911211fb79e3e7b83f5846257e91b87de649d2e05a44c3948f681" }   # pinned from first green run 2026-10-20 (S4.2); Renovate bumps
       - name: Package
         run: |
-          cd data && zstd -19 -T0 valhalla_tiles.tar -o valhalla-india.tar.zst
-          sha256sum valhalla-india.tar.zst > valhalla-india.sha256
+          # bzip2 + <=1.8 GB parts: the in-cluster loader image has lbzip2 (no zstd) and a release asset caps at 2 GiB
+          sudo apt-get install -y -qq lbzip2
+          cd data && lbzip2 -9 -c valhalla_tiles.tar | split -b 1800M -d - valhalla-india.tar.bz2.part-
+          sha256sum valhalla-india.tar.bz2.part-* > valhalla-india.sha256
+          ls -l valhalla-india.tar.bz2.part-*
           cp ../config/valhalla.json valhalla.json
       - name: Publish release (the backend geo chart pins this asset by sha256)
         env: { GH_TOKEN: "${{ github.token }}" }
         run: |
           tag=tiles-$(date -u +%Y-%m-%d)-${{ github.run_number }}
-          gh release create "$tag" --title "$tag" --notes "Valhalla India tiles (OSM ODbL, Geofabrik extract)" data/valhalla-india.tar.zst data/valhalla-india.sha256
+          gh release create "$tag" --title "$tag" --notes "Valhalla India tiles (OSM ODbL, Geofabrik extract)" data/valhalla-india.tar.bz2.part-* data/valhalla-india.sha256
           cat data/valhalla-india.sha256
       - name: Build state polygons + ghats (backend pkg/region; diff and commit there on refresh)
         continue-on-error: true
@@ -48,7 +51,7 @@ jobs:
         with:
           name: valhalla-india
           path: |
-            data/valhalla-india.tar.zst
+            data/valhalla-india.tar.bz2.part-*
             data/valhalla-india.sha256
             data/valhalla.json
             data/india.poly
