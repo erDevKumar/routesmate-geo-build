@@ -210,7 +210,7 @@
   },
   {
    "id": "delhi-amritsar-katra",
-   "name": "^Delhi.{0,4}Amritsar.{0,4}Katra Expressway",
+   "name": "^Delhi.{0,4}Amritsar.{0,4}Katra Expressway|^NE-?5$",
    "tags": {
     "motorcycle": "no"
    },

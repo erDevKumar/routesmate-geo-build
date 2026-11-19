@@ -1,8 +1,8 @@
 import json, unittest, xml.etree.ElementTree as ET
 from apply_overlay import overlay, CFG
 
-def way(i, loc=(0, 0), **t):
-    return f'<way id="{i}"><nd ref="1" lat="{loc[0]}" lon="{loc[1]}"/>' + "".join(f'<tag k="{k}" v="{v}"/>' for k, v in t.items()) + "</way>"
+def way(i, loc=(0, 0), nds=(1,), **t):
+    return f'<way id="{i}">' + "".join(f'<nd ref="{n}" lat="{loc[0]}" lon="{loc[1]}"/>' for n in nds) + "".join(f'<tag k="{k}" v="{v}"/>' for k, v in t.items()) + "</way>"
 
 XML = "<osm>" + way(1, highway="motorway", name="Dwarka Expressway") \
     + way(2, highway="motorway", name="Dwarka Expressway", motorcycle="yes") \
@@ -25,7 +25,47 @@ XML = "<osm>" + way(1, highway="motorway", name="Dwarka Expressway") \
     + way(19, highway="motorway", name="Jind - Gohana - Sonipat Expressway") \
     + way(20, highway="motorway", name="Grand Trunk Road", ref="NH44") + "</osm>"
 
+# link rule: nodes 101.. are shared joints
+LINKS = "<osm>" \
+    + way(100, nds=(101, 102), highway="motorway", name="Western Peripheral Expressway") \
+    + way(110, nds=(102, 103), highway="motorway_link") \
+    + way(111, nds=(103, 104), highway="motorway") \
+    + way(112, nds=(104, 105), highway="motorway_link") \
+    + way(113, nds=(105, 106), highway="motorway_link") \
+    + way(114, nds=(106, 107), highway="motorway_link") \
+    + way(115, nds=(107, 108), highway="motorway_link") \
+    + way(116, nds=(108, 109), highway="motorway_link") \
+    + way(120, nds=(101, 121), highway="motorway_link") \
+    + way(121, nds=(121, 122), highway="motorway_link") \
+    + way(122, nds=(122, 123), highway="motorway", name="Noida-Greater Noida Expressway") \
+    + way(130, nds=(101, 131), highway="trunk") \
+    + way(131, nds=(101, 132), highway="motorway_link", ref="NH48") \
+    + way(132, nds=(101, 133), highway="motorway_link", motorcycle="yes") + "</osm>"
+
+
 class T(unittest.TestCase):
+    def links(self):
+        osc, hits = overlay(ET.fromstring(LINKS), json.loads(CFG.read_text()), {"user-approved-2026-11-19"})
+        return {w.get("id") for w in osc.iter("way")}, hits
+
+    def test_unnamed_ramps_of_barred_expressway_are_barred(self):
+        ids, hits = self.links()
+        self.assertTrue({"110", "111", "112", "113", "114", "115"} <= ids)
+        self.assertEqual(hits["wpe-kmp+links"], 6)
+
+    def test_hop_limit(self):
+        ids, _ = self.links()
+        self.assertNotIn("116", ids)  # 7th hop
+
+    def test_ramp_touching_legal_expressway_stays_open(self):
+        ids, _ = self.links()
+        self.assertFalse({"120", "121"} & ids)  # component reaches the named, unbarred Noida expressway
+
+    def test_never_touches_surface_ref_or_tagged_ways(self):
+        ids, _ = self.links()
+        self.assertFalse({"130", "131", "132"} & ids)  # trunk, ref'd link, already-tagged link
+
+
     def run_(self, st):
         osc, hits = overlay(ET.fromstring(XML), json.loads(CFG.read_text()), st)
         return {w.get("id"): {t.get("k"): t.get("v") for t in w.findall("tag")} for w in osc.iter("way")}, hits
