@@ -1,0 +1,273 @@
+{
+ "_doc": "Reviewed access overlay applied to the OSM extract before tiling (scripts/apply_overlay.py). A rule adds tags to ways whose name/ref matches (optionally limited to a per-rule 'highways' list and a 'bbox' [west,south,east,north]); it never overrides a tag already on the way. Statuses applied by default: confirmed, user-approved-2026-11-19. 'assumed' rules are documented in PRD 12.3 s9 and are not in this file. motorway ways are already closed to bicycle/pedestrian by Valhalla defaults, so approved-by-general-rule expressways add motorcycle=no only. Upstream OSM should get the same tags.",
+ "highways": [
+  "motorway",
+  "motorway_link"
+ ],
+ "rules": [
+  {
+   "id": "dwarka-expy",
+   "name": "^Dwarka Expressway$",
+   "tags": {
+    "motorcycle": "no",
+    "bicycle": "no",
+    "foot": "no"
+   },
+   "status": "confirmed",
+   "source": "NHAI notice 2024-03 barring non-motorised vehicles; two-wheelers barred (newsonair.gov.in NHAI prohibits non-motorised vehicles on Dwarka Expressway)"
+  },
+  {
+   "id": "dme",
+   "name": "^Delhi.{0,3}(Mumbai|Vadodara) Expressway",
+   "tags": {
+    "motorcycle": "no",
+    "bicycle": "no",
+    "foot": "no"
+   },
+   "status": "confirmed",
+   "source": "NHAI gazette for Delhi-Dausa stretch: two-wheelers, three-wheelers, non-motorised vehicles, tractors barred (DNA India 2022)"
+  },
+  {
+   "id": "delhi-meerut",
+   "name": "^Delhi.{0,4}Meerut Expressway",
+   "tags": {
+    "motorcycle": "no",
+    "bicycle": "no",
+    "foot": "no"
+   },
+   "status": "confirmed",
+   "source": "Gazette notification 15.01.2021 prohibiting two-wheelers (as quoted by NHAI/press)"
+  },
+  {
+   "id": "blr-mysuru",
+   "name": "^Bengaluru.{0,3}Mysuru Expressway$",
+   "tags": {
+    "motorcycle": "no",
+    "bicycle": "no",
+    "foot": "no"
+   },
+   "status": "confirmed",
+   "source": "NHAI notification effective 2023-08-01 (Deccan Herald); main carriageway only, service roads stay open"
+  },
+  {
+   "id": "wpe-kmp",
+   "name": "^(Delhi )?Western Peripheral Expressway$|^WPE,|Delhi Western Peripheral Expressway",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "PIB PRID 1777237 (NHAI: two-wheelers not allowed on expressways); Delhi High Court upheld the bar (barandbench.com/news/delhi-high-court-rejects-plea-allow-two-wheelers-national-highways-expressways)",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "epe",
+   "name": "^Delhi Eastern Peripheral Expressway$",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same as wpe-kmp; indiangrapevine.com/news/nhai-prohibits-cycles-two-and-three-wheelers-movement-on-3-national-highways-17727 (NHAI barred 2/3-wheelers on access-controlled NHs near Delhi)",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "yamuna-expy",
+   "name": "Yamuna Expressway",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same general rule; YEIDA access-controlled; no per-road notification read",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "mumbai-pune",
+   "name": "Mumbai.{0,3}Pune Expressway",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same general rule; MSRDC access-controlled; no per-road notification read",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "ganga-expy",
+   "name": "^Ganga Expressway$",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same general rule; access-controlled; no per-road notification read",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "delhi-dehradun",
+   "name": "^Delhi.{0,4}Dehradun Expressway",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same general rule; access-controlled; no per-road notification read",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "mumbai-eastern-freeway",
+   "name": "^Eastern Freeway$",
+   "highways": [
+    "motorway",
+    "motorway_link",
+    "trunk",
+    "trunk_link",
+    "primary",
+    "primary_link",
+    "secondary",
+    "secondary_link"
+   ],
+   "bbox": [
+    72.8,
+    18.9,
+    73.0,
+    19.1
+   ],
+   "tags": {
+    "motorcycle": "no",
+    "bicycle": "no",
+    "foot": "no"
+   },
+   "status": "confirmed",
+   "source": "Free Press Journal 2026 (two-wheelers, scooters, bicycles prohibited on Eastern Freeway); no gazette read"
+  },
+  {
+   "id": "mumbai-atal-setu",
+   "name": "Atal Setu|Trans.?Harbou?r Link|^MTHL",
+   "highways": [
+    "motorway",
+    "motorway_link",
+    "trunk",
+    "trunk_link",
+    "primary",
+    "primary_link",
+    "secondary",
+    "secondary_link"
+   ],
+   "bbox": [
+    72.8,
+    18.8,
+    73.2,
+    19.2
+   ],
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "confirmed",
+   "source": "Maharashtra Police notification Jan 2024 (theweek.in/wire-updates/national/2024/01/10/bom43-mh-mthl-speed-limit.html): two-wheelers, autos, tractors, slow vehicles barred"
+  },
+  {
+   "id": "mumbai-coastal-road",
+   "name": "Coastal Road|Swarajya Rakshak|Sambhaji Maharaj Marg",
+   "highways": [
+    "motorway",
+    "motorway_link",
+    "trunk",
+    "trunk_link",
+    "primary",
+    "primary_link",
+    "secondary",
+    "secondary_link"
+   ],
+   "bbox": [
+    72.78,
+    18.9,
+    72.9,
+    19.1
+   ],
+   "tags": {
+    "motorcycle": "no",
+    "bicycle": "no",
+    "foot": "no"
+   },
+   "status": "confirmed",
+   "source": "Free Press Journal (freepressjournal.in/mumbai/mumbai-couple-caught-riding-two-wheeler-on-coastal-road-despite-ban-video-goes-viral): two-wheelers, cycles, pedestrians not permitted; no notification cited"
+  },
+  {
+   "id": "dme-mumbai-vadodara",
+   "name": "^Mumbai.{0,4}Vadodara Expressway",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "Southern DME section (NE4); same NHAI expressway, no per-road notification read; user-approved 2026-11-19. Never overrides: dme rule covers the named Delhi-Vadodara ways first",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "dnd-kmp",
+   "name": "^DND.?KMP Expressway|^NH148NA$",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same general rule as wpe-kmp (PIB PRID 1777237; Delhi High Court upheld the bar); access-controlled; no per-road notification read",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "delhi-amritsar-katra",
+   "name": "^Delhi.{0,4}Amritsar.{0,4}Katra Expressway",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same general rule as wpe-kmp (PIB PRID 1777237; Delhi High Court upheld the bar); access-controlled; no per-road notification read",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "amritsar-jamnagar",
+   "name": "^Amritsar.{0,3}Jamnagar Expressway",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same general rule as wpe-kmp (PIB PRID 1777237; Delhi High Court upheld the bar); access-controlled; no per-road notification read",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "jaipur-bandikui",
+   "name": "^Jaipur.{0,4}Bandikui Expressway",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same general rule as wpe-kmp (PIB PRID 1777237; Delhi High Court upheld the bar); access-controlled; no per-road notification read",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "trans-haryana",
+   "name": "^Trans.?Haryana Expressway|^NH152D$",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same general rule as wpe-kmp (PIB PRID 1777237; Delhi High Court upheld the bar); access-controlled; no per-road notification read",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "jind-gohana-sonipat",
+   "name": "^Jind.{0,4}Gohana.{0,4}Sonipat Expressway",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same general rule as wpe-kmp (PIB PRID 1777237; Delhi High Court upheld the bar); access-controlled; no per-road notification read",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  },
+  {
+   "id": "mumbai-nagpur-samruddhi",
+   "name": "Samruddhi|^Mumbai.{0,4}Nagpur Expressway",
+   "tags": {
+    "motorcycle": "no"
+   },
+   "status": "user-approved-2026-11-19",
+   "source": "same general rule as wpe-kmp (PIB PRID 1777237; Delhi High Court upheld the bar); access-controlled; no per-road notification read",
+   "reason": "NHAI general rule: no two-wheelers on access-controlled expressways"
+  }
+ ],
+ "_not_listed": "Noida-Greater Noida Expressway, DND Flyway: urban expressways open to two-wheelers; do not add."
+}

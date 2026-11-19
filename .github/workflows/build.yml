@@ -18,6 +18,18 @@ jobs:
           curl -fsSL https://download.geofabrik.de/asia/india-latest.osm.pbf.md5 | md5sum -c -
           # P3-GEO: the extract boundary; backend pkg/region/polys/IN.poly must match it (diff on refresh)
           curl -fsSL -o india.poly https://download.geofabrik.de/asia/india.poly
+      - name: Vehicle access overlay (12.3 §9; confirmed + user-approved-2026-11-19 rules)
+        run: |
+          python3 scripts/test_apply_overlay.py
+          sudo apt-get install -y -qq osmium-tool
+          cd data
+          # candidate ways + their nodes (tags-filter keeps referenced nodes), locations added for per-rule bbox
+          osmium tags-filter india-latest.osm.pbf w/highway=motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,secondary_link -o cand.pbf
+          osmium add-locations-to-ways cand.pbf -o cand-loc.pbf
+          osmium cat cand-loc.pbf -t way -f osm,locations_on_ways=true | python3 ../scripts/apply_overlay.py > overlay.osc
+          osmium apply-changes india-latest.osm.pbf overlay.osc -o india-overlay.pbf --overwrite
+          mv india-overlay.pbf india-latest.osm.pbf
+          rm -f cand.pbf cand-loc.pbf overlay.osc
       - name: Build tiles
         run: |
           docker run --rm -v "$PWD/data:/data" -v "$PWD/config:/config" "${VALHALLA_IMAGE}" bash -c '
